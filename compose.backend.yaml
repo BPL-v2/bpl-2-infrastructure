@@ -1,0 +1,10 @@
+version: "3.3"
+
+services:
+  server:
+    image: bpl-2-backend:latest
+    ports:
+      - "8000:8000"
+    network_mode: "host"
+    volumes:
+      - ./.env:/app/.env
