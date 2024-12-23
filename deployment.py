@@ -14,7 +14,8 @@ if not deployment_token:
 
 
 app2compose = {
-    "backend": "compose.backend.yaml"
+    "backend": "compose.backend.yaml",
+    "frontend": "compose.frontend.yaml",
 }
 
 
