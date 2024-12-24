@@ -94,12 +94,21 @@ def deploy_image(image: DockerImage):
     # set image as environment variable
     os.environ[image['env_variable']] = image['image']
     try:
+        subprocess.run(['docker', 'pull', image['image']],
+                       check=True, capture_output=True, text=True)
+        print(f'Docker image {image["image"]} pulled successfully', flush=True)
+    except subprocess.CalledProcessError as e:
+        print(f'Error occurred during docker pull: {e.stderr}', flush=True)
+        return
+
+    try:
         subprocess.run(['docker', 'compose', '-f', image['compose_file'],
                         'down'], check=True, capture_output=True, text=True)
     except subprocess.CalledProcessError as e:
         print(
             f'Error occurred during docker-compose up: {e.stderr}', flush=True)
         return
+
     try:
         subprocess.run(['docker', 'compose', '-f', image['compose_file'],
                         'up', '-d'], check=True, capture_output=True, text=True)
