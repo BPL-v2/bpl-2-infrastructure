@@ -1,4 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import json
 import os
 import subprocess
 import cgi
@@ -21,7 +22,7 @@ app2compose = {
 
 class DeploymentHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        if self.path == '/deployment':
+        if '/deployment' in self.path:
             self.handle_deploy()
         else:
             self.send_response(404)
@@ -29,37 +30,66 @@ class DeploymentHandler(BaseHTTPRequestHandler):
             self.wfile.write(b'Not Found')
 
     def handle_deploy(self):
-        auth_header = self.headers.get('Authorization')
-        if auth_header != f'Bearer {deployment_token}':
+        param_dict = self.get_query_params()
+        if param_dict.get("token") != deployment_token:
             self.send_response(401)
             self.end_headers()
             self.wfile.write(b'Unauthorized')
             return
-        print('Received deployment request', flush=True)
 
-        ctype, pdict = cgi.parse_header(self.headers['content-type'])
-        pdict['boundary'] = pdict['boundary'].encode('ascii')
-        if ctype == 'multipart/form-data':
-            fields = cgi.parse_multipart(self.rfile, pdict)
-            if 'image' in fields and fields.get("app", [None])[0] in app2compose:
-                image_data = fields['image'][0]
-                with open('docker_image.tar', 'wb') as f:
-                    f.write(image_data)
-                print('Docker image saved to docker_image.tar', flush=True)
-                deploy_image(app2compose[fields['app'][0]])
-                os.remove('docker_image.tar')
-                self.send_response(200)
-                self.end_headers()
-                self.wfile.write(
-                    b'Docker image loaded and Docker Compose triggered')
-            else:
-                self.send_response(400)
-                self.end_headers()
-                self.wfile.write(b'Invalid data')
-        else:
+        if param_dict.get("app") not in app2compose:
             self.send_response(400)
             self.end_headers()
-            self.wfile.write(b'Invalid content type')
+            self.wfile.write(b'Invalid application')
+            return
+
+        print('Received deployment request', flush=True)
+        body = json.loads(self.rfile.read(
+            int(self.headers['Content-Length'])))
+        print(f'Body: {body}', flush=True)
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b'Deployment request received')
+
+        # ctype, pdict = cgi.parse_header(self.headers['content-type'])
+        # pdict['boundary'] = pdict['boundary'].encode('ascii')
+        # if ctype == 'multipart/form-data':
+        #     fields = cgi.parse_multipart(self.rfile, pdict)
+        #     if 'image' in fields and fields.get("app", [None])[0] in app2compose:
+        #         image_data = fields['image'][0]
+        #         with open('docker_image.tar', 'wb') as f:
+        #             f.write(image_data)
+        #         print('Docker image saved to docker_image.tar', flush=True)
+        #         deploy_image(app2compose[fields['app'][0]])
+        #         os.remove('docker_image.tar')
+        #         self.send_response(200)
+        #         self.end_headers()
+        #         self.wfile.write(
+        #             b'Docker image loaded and Docker Compose triggered')
+        #     else:
+        #         self.send_response(400)
+        #         self.end_headers()
+        #         self.wfile.write(b'Invalid data')
+        # else:
+        #     self.send_response(400)
+        #     self.end_headers()
+        #     self.wfile.write(b'Invalid content type')
+
+    def get_query_params(self) -> dict:
+        if '?' not in self.path:
+            return {}
+        query = self.path.split('?')[1]
+        param_dict = {}
+        for param in query.split('&'):
+            key, value = param.split('=')
+            if key in param_dict:
+                if isinstance(param_dict[key], list):
+                    param_dict[key].append(value)
+                else:
+                    param_dict[key] = [param_dict[key], value]
+            else:
+                param_dict[key] = value
+        return param_dict
 
 
 def run(server_class=HTTPServer, handler_class=DeploymentHandler, port=5000):
