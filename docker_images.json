@@ -1,0 +1,12 @@
+{
+    "frontend": {
+        "compose_file": "compose.frontend.yaml",
+        "image": "liberatorist/bpl2-frontend:1.0.0",
+        "env_variable": "FRONTEND_IMAGE"
+    },
+    "backend": {
+        "compose_file": "compose.backend.yaml",
+        "image": "liberatorist/bpl2-backend:1.0.0",
+        "env_variable": "BACKEND_IMAGE"
+    }
+}

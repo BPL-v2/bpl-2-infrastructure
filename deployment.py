@@ -2,7 +2,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import os
 import subprocess
-import cgi
+from typing import TypedDict
 
 
 with open(".env", "r") as f:
@@ -18,6 +18,12 @@ app2compose = {
     "backend": "compose.backend.yaml",
     "frontend": "compose.frontend.yaml",
 }
+
+
+class DockerImage(TypedDict):
+    image: str
+    compose_file: str
+    env_variable: str
 
 
 class DeploymentHandler(BaseHTTPRequestHandler):
@@ -43,37 +49,22 @@ class DeploymentHandler(BaseHTTPRequestHandler):
             self.wfile.write(b'Invalid application')
             return
 
-        print('Received deployment request', flush=True)
+        app = param_dict["app"]
         body = json.loads(self.rfile.read(
             int(self.headers['Content-Length'])))
-        print(f'Body: {body}', flush=True)
+        image = body["repository"]["repo_name"] + \
+            ":" + body["push_data"]["tag"]
+
+        with open('docker_images.json', 'r') as f:
+            images: dict[str, DockerImage] = json.load(f)
+            images[app]["image"] = image
+        with open('docker_images.json', 'w') as f:
+            json.dump(images, f, indent=2)
+        deploy_image(images[app])
+
         self.send_response(200)
         self.end_headers()
         self.wfile.write(b'Deployment request received')
-
-        # ctype, pdict = cgi.parse_header(self.headers['content-type'])
-        # pdict['boundary'] = pdict['boundary'].encode('ascii')
-        # if ctype == 'multipart/form-data':
-        #     fields = cgi.parse_multipart(self.rfile, pdict)
-        #     if 'image' in fields and fields.get("app", [None])[0] in app2compose:
-        #         image_data = fields['image'][0]
-        #         with open('docker_image.tar', 'wb') as f:
-        #             f.write(image_data)
-        #         print('Docker image saved to docker_image.tar', flush=True)
-        #         deploy_image(app2compose[fields['app'][0]])
-        #         os.remove('docker_image.tar')
-        #         self.send_response(200)
-        #         self.end_headers()
-        #         self.wfile.write(
-        #             b'Docker image loaded and Docker Compose triggered')
-        #     else:
-        #         self.send_response(400)
-        #         self.end_headers()
-        #         self.wfile.write(b'Invalid data')
-        # else:
-        #     self.send_response(400)
-        #     self.end_headers()
-        #     self.wfile.write(b'Invalid content type')
 
     def get_query_params(self) -> dict:
         if '?' not in self.path:
@@ -99,26 +90,19 @@ def run(server_class=HTTPServer, handler_class=DeploymentHandler, port=5000):
     httpd.serve_forever()
 
 
-def deploy_image(compose_file: str):
+def deploy_image(image: DockerImage):
+    # set image as environment variable
+    os.environ[image['env_variable']] = image['image']
     try:
-        result = subprocess.run(
-            ['docker', 'load', '-i', 'docker_image.tar'], check=True, capture_output=True, text=True)
-        print(f'Docker load output: {result.stdout}', flush=True)
-    except subprocess.CalledProcessError as e:
-        print(f'Error occurred during docker load: {e.stderr}', flush=True)
-        return
-    print('Docker image loaded successfully', flush=True)
-
-    try:
-        result = subprocess.run(['docker', 'compose', '-f', compose_file,
-                                'down'], check=True, capture_output=True, text=True)
+        subprocess.run(['docker', 'compose', '-f', image['compose_file'],
+                        'down'], check=True, capture_output=True, text=True)
     except subprocess.CalledProcessError as e:
         print(
             f'Error occurred during docker-compose up: {e.stderr}', flush=True)
         return
     try:
-        result = subprocess.run(['docker', 'compose', '-f', compose_file,
-                                'up', '-d'], check=True, capture_output=True, text=True)
+        subprocess.run(['docker', 'compose', '-f', image['compose_file'],
+                        'up', '-d'], check=True, capture_output=True, text=True)
     except subprocess.CalledProcessError as e:
         print(
             f'Error occurred during docker-compose up: {e.stderr}', flush=True)
