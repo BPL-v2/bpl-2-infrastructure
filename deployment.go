@@ -80,6 +80,12 @@ var images = DockerImages{
 		app:        "frontend",
 		Timestamp:  nil,
 	},
+	{
+		Repository: "liberatorist/bpl2-discord-bot",
+		Tag:        "",
+		app:        "discord-bot",
+		Timestamp:  nil,
+	},
 }
 
 func postDeploymentHandler(w http.ResponseWriter, r *http.Request) {
