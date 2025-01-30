@@ -35,8 +35,6 @@ services:
     container_name: backend
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
-    ports:
-      - "8000:8000"
     volumes:
       - .env:/app/.env
     depends_on:
@@ -54,8 +52,6 @@ services:
     container_name: frontend
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
-    ports:
-      - "3000:3000"
     networks:
       - network
   discord-bot:
@@ -65,8 +61,6 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     volumes:
       - .env:/app/.env
-    ports:
-      - "9876:9876"
     networks:
       - network
     depends_on:
@@ -77,8 +71,6 @@ services:
     image: postgres:17.2-alpine
     container_name: db
     restart: always
-    ports:
-      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
