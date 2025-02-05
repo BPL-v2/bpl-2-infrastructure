@@ -1,0 +1,37 @@
+services:
+  reverse-proxy:
+    image: nginx:latest
+    container_name: reverse-proxy-local
+    restart: always
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    expose:
+      - 80
+    network_mode: "host"
+
+  db:
+    image: postgres:17.2-alpine
+    container_name: db-local
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    environment:
+      - PGUSER=postgres
+    env_file: ../.env
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 5s
+      timeout: 1s
+      retries: 1
+    networks:
+      - network
+
+volumes:
+  db_data:
+
+networks:
+  network:
