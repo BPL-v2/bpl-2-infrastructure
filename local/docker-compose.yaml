@@ -30,6 +30,13 @@ services:
     networks:
       - network
 
+  kafka:
+    image: apache/kafka:3.9.0
+    ports:
+      - "9092:9092"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
 volumes:
   db_data:
 
