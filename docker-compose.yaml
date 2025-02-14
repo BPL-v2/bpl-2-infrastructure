@@ -47,6 +47,7 @@ services:
       retries: 1
     networks:
       - network
+
   frontend:
     image: liberatorist/bpl2-frontend:0.0.1
     container_name: frontend
@@ -89,13 +90,24 @@ services:
   kafka:
     container_name: kafka
     image: apache/kafka:3.9.0
-    ports:
-      - "9092:9092"
-
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - network
+    environment:
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENERS: PLAINTEXT://kafka:9092,CONTROLLER://kafka:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_LOG_FLUSH_INTERVAL_MESSAGES: 1
 
 volumes:
   db_data:
