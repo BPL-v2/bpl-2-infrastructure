@@ -14,6 +14,7 @@ services:
       - "--rolling-restart"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
   reverse-proxy:
     image: nginx:latest
     container_name: reverse-proxy
@@ -55,6 +56,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     networks:
       - network
+
   discord-bot:
     image: liberatorist/bpl2-discord-bot:0.0.0
     container_name: discord-bot
@@ -110,8 +112,48 @@ services:
       KAFKA_MIN_INSYNC_REPLICAS: 1
       KAFKA_LOG_FLUSH_INTERVAL_MESSAGES: 1
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - network
+
+  loki:
+    image: grafana/loki:3.4
+    container_name: loki
+    volumes:
+      - ./loki-config.yml:/etc/loki/local-config.yaml
+      - ./loki-data:/loki
+    networks:
+      - network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - network
+
+  promtail:
+    image: grafana/promtail:3.4
+    container_name: promtail
+    volumes:
+      - ./promtail-config.yml:/etc/promtail/config.yml
+      - /var/log:/var/log
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - network
+
 volumes:
   db_data:
+  loki_data:
 
 networks:
   network:
