@@ -134,10 +134,13 @@ services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
-    ports:
-      - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_SERVER_ROOT_URL=http://localhost/monitoring/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    env_file: .env
+    volumes:
+      - ./grafana.ini:/etc/grafana/grafana.ini
     networks:
       - network
 
