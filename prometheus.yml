@@ -14,3 +14,7 @@ scrape_configs:
     metrics_path: /api/metrics
     static_configs:
       - targets: ["backend:8000"]
+
+  - job_name: postgres
+    static_configs:
+      - targets: ["postgres-exporter:9187"] # Replace IP with the hostname of the docker container if you're running the container in a separate network
