@@ -3,3 +3,4 @@
 /local/*
 kafka/
 /loki-data
+grafana.db
