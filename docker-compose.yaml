@@ -168,6 +168,11 @@ services:
       - prometheus
     networks:
       - network
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    networks:
+      - network
 
 volumes:
   db_data:
