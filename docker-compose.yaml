@@ -143,7 +143,7 @@ services:
     env_file: .env
     volumes:
       - ./grafana.ini:/etc/grafana/grafana.ini
-      - /grafana-data:/var/lib/grafana
+      - ./grafana.db:/var/lib/grafana/grafana.db
     networks:
       - network
 
