@@ -141,7 +141,7 @@ services:
     env_file: .env
     volumes:
       - ./grafana.ini:/etc/grafana/grafana.ini
-      - grafana-storage/var/lib/grafana
+      - grafana-storage:/var/lib/grafana
     networks:
       - network
 
@@ -177,6 +177,7 @@ services:
 volumes:
   db_data:
   loki_data:
+  grafana-storage:
 
 networks:
   network:
