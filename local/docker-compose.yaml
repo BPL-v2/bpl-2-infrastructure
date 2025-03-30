@@ -21,7 +21,7 @@ services:
       - db_data:/var/lib/postgresql/data
     environment:
       - PGUSER=postgres
-    env_file: ../.env
+      - PGPASSWORD=postgres
     healthcheck:
       test: ["CMD", "pg_isready"]
       interval: 5s
