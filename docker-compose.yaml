@@ -17,6 +17,10 @@ services:
 
   reverse-proxy:
     image: nginx:latest
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
     container_name: reverse-proxy
     restart: always
     volumes:
@@ -32,6 +36,10 @@ services:
 
   backend:
     image: liberatorist/bpl2-backend:0.0.1
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
     container_name: backend
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
