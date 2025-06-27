@@ -78,7 +78,7 @@ services:
         condition: service_healthy
 
   db:
-    image: postgres:17.2-alpine
+    image: timescale/timescaledb:2.20.3-pg17
     container_name: db
     restart: always
     ports:
@@ -88,6 +88,8 @@ services:
     environment:
       - PGUSER=${POSTGRES_USER}
       - PGPASSWORD=${POSTGRES_PASSWORD}
+      - TIMESCALEDB_TELEMETRY=off
+      - POSTGRESQL_CONF_shared_preload_libraries=timescaledb
     env_file: .env
     healthcheck:
       test: ["CMD", "pg_isready"]
