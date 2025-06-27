@@ -1,6 +1,5 @@
 /.env
 !local/.env
 .data
-/local/*
 kafka/
 /loki-data

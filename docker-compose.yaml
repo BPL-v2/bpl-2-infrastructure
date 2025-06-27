@@ -125,6 +125,7 @@ services:
     container_name: prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
     ports:
       - "9090:9090"
     networks:
@@ -135,7 +136,7 @@ services:
     container_name: loki
     volumes:
       - ./loki-config.yml:/etc/loki/local-config.yaml
-      - ./loki-data:/loki
+      - loki_data:/loki
     networks:
       - network
 
@@ -149,7 +150,7 @@ services:
     env_file: .env
     volumes:
       - ./grafana.ini:/etc/grafana/grafana.ini
-      - ./grafana-data:/var/lib/grafana
+      - grafana_data:/var/lib/grafana
     networks:
       - network
 
@@ -182,10 +183,17 @@ services:
     networks:
       - network
 
+  pob-server:
+    image: liberatorist/pob-http-server:1.0.0
+    container_name: pob-server
+    networks:
+      - network
+
 volumes:
   db_data:
+  prometheus_data:
   loki_data:
-  grafana-storage:
+  grafana_data:
 
 networks:
   network:

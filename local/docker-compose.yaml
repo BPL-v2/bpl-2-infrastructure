@@ -12,7 +12,7 @@ services:
     network_mode: "host"
 
   db:
-    image: postgres:17.2-alpine
+    image: timescale/timescaledb:2.20.3-pg17
     container_name: db-local
     restart: always
     ports:
@@ -22,6 +22,8 @@ services:
     environment:
       - PGUSER=postgres
       - PGPASSWORD=postgres
+      - TIMESCALEDB_TELEMETRY=off
+      - POSTGRESQL_CONF_shared_preload_libraries=timescaledb
     healthcheck:
       test: ["CMD", "pg_isready"]
       interval: 5s
@@ -30,17 +32,94 @@ services:
     networks:
       - network
 
-  kafka:
-    image: apache/kafka:3.9.0
-    restart: always
+  # kafka:
+  #   image: apache/kafka:3.9.0
+  #   restart: always
+  #   ports:
+  #     - "9092:9092"
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - ${PWD}/kafka-logs:/tmp/kraft-combined-logs
+
+  pob-server:
+    image: liberatorist/pob-http-server:1.0.0
+    container_name: pob-server
     ports:
-      - "9092:9092"
+      - "8080:8080"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
     volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  loki:
+    image: grafana/loki:3.4
+    container_name: loki
+    volumes:
+      - ./loki-config.yml:/etc/loki/local-config.yaml
+      - loki_data:/loki
+    networks:
+      - network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "4000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SERVER_ROOT_URL=http://localhost/monitoring/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    env_file: .env
+    volumes:
+      - ./grafana.ini:/etc/grafana/grafana.ini
+      - grafana_data:/var/lib/grafana
+    networks:
+      - network
+
+  promtail:
+    image: grafana/promtail:3.4
+    container_name: promtail
+    volumes:
+      - ./promtail-config.yml:/etc/promtail/config.yml
+      - /var/log:/var/log
       - /var/run/docker.sock:/var/run/docker.sock
-      - ${PWD}/kafka-logs:/tmp/kraft-combined-logs
+    networks:
+      - network
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter
+    environment:
+      DATA_SOURCE_URI: db:5432/postgres?sslmode=disable
+      DATA_SOURCE_USER: ${POSTGRES_USER}
+      DATA_SOURCE_PASS: ${POSTGRES_PASSWORD}
+    env_file:
+      - .env
+    links:
+      - db
+      - prometheus
+    networks:
+      - network
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    networks:
+      - network
 
 volumes:
   db_data:
+  prometheus_data:
+  loki_data:
+  grafana_data:
 
 networks:
   network:

@@ -63,3 +63,23 @@ The dockerhub repos are
 - https://hub.docker.com/repository/docker/liberatorist/bpl2-frontend
 - https://hub.docker.com/repository/docker/liberatorist/bpl2-backend
 - https://hub.docker.com/repository/docker/liberatorist/bpl2-discord-bot
+
+## Timescale DB Migration
+
+We decided to install the timescaledb docker extension for character timeseries data.
+If you're still running the old postgres database in docker compose, change the image and run
+
+```
+docker compose up -d
+docker exec -it db bash
+echo "shared_preload_libraries = 'timescaledb'" >> /var/lib/postgresql/data/postgresql.conf
+docker restart db-local
+```
+
+connect to the database with psql and run
+
+```
+CREATE EXTENSION IF NOT EXISTS timescaledb;
+```
+
+to add the extension.
