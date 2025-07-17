@@ -185,11 +185,15 @@ services:
     networks:
       - network
 
-  # pob-server:
-  #   image: liberatorist/pob-http-server:1.0.0
-  #   container_name: pob-server
-  #   networks:
-  #     - network
+  # this service seems to be cpu bound. We cant afford to let it use more than 2 cores though
+  # with this we expect about 0.6 PoBs per second calculated
+  pob-server:
+    image: liberatorist/pob-http-server:1.0.0
+    container_name: pob-server
+    mem_limit: 1.5GB
+    cpus: 2
+    networks:
+      - network
 
 volumes:
   db_data:
