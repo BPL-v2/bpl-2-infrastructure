@@ -185,11 +185,11 @@ services:
     networks:
       - network
 
-  pob-server:
-    image: liberatorist/pob-http-server:1.0.0
-    container_name: pob-server
-    networks:
-      - network
+  # pob-server:
+  #   image: liberatorist/pob-http-server:1.0.0
+  #   container_name: pob-server
+  #   networks:
+  #     - network
 
 volumes:
   db_data:
