@@ -50,6 +50,8 @@ services:
       KAFKA_NUM_PARTITIONS: 3 # Default number of partitions for new topics
     ports:
       - "9092:9092" # Port for Kafka broker
+    volumes:
+      - kafka_data:/opt/kafka/data # Volume for Kafka data
     healthcheck:
       test:
         [
