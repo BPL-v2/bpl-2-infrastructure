@@ -7,13 +7,15 @@ services:
     environment:
       - "WATCHTOWER_NOTIFICATIONS=shoutrrr"
       - "WATCHTOWER_NOTIFICATION_URL=${WATCHTOWER_NOTIFICATION_URL}"
+      - WATCHTOWER_HTTP_API_TOKEN=${WATCHTOWER_TOKEN}
     command:
-      - "--label-enable"
-      - "--interval"
-      - "30"
+      - "--http-api-update"
       - "--rolling-restart"
+      - "--label-enable"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - network
 
   reverse-proxy:
     image: nginx:latest
@@ -103,8 +105,7 @@ services:
     container_name: kafka
     image: apache/kafka:3.9.0
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${PWD}/kafka-logs:/tmp/kraft-combined-logs
+      - kafka_data:/opt/kafka/data
     networks:
       - network
     environment:
@@ -202,6 +203,7 @@ volumes:
   prometheus_data:
   loki_data:
   grafana_data:
+  kafka_data:
 
 networks:
   network:
