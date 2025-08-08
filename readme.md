@@ -21,11 +21,12 @@ Reverse proxy to route requests to the services.
 
 - /api/\* -> backend
 - /monitoring/\* -> grafana
+- /watchtower -> watchtower
 - anything elese -> frontend
 
 ### Watchtower
 
-Looks for new docker images for frontend/backend/discord-bot every 30 seconds and deploys them.
+Downloads and deploys new images from dockerhub when triggered via webhook from github actions
 
 ### Backend
 
@@ -100,8 +101,7 @@ docker compose up -d
 
 ## Deployment
 
-Once a change is pushed to the main branches of the backend/frontend/discord-bot repos, they trigger a github action to push newly build docker images to dockerhub.
-Watchtower queries dockerhub every 30 seconds and deploys any new versions automatically
+Once a change is pushed to the main branches of the backend/frontend/discord-bot repos, they trigger a github action to push newly build docker images to dockerhub and send an update request to watchtower.
 The dockerhub repos are
 
 - https://hub.docker.com/repository/docker/liberatorist/bpl2-frontend
