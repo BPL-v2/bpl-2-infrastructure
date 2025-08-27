@@ -40,12 +40,7 @@ https://github.com/BPL-v2/bpl-2-discord-bot
 
 https://github.com/BPL-v2/bpl-2-fronend
 
-## How to set this up locally
 
-```
-cd local
-docker compose up -d
-```
 
 ## Environment variables
 
@@ -91,6 +86,12 @@ WATCHTOWER_NOTIFICATION_URL=dummy                       # webhook url for watcht
 this will give you a rundown on the used variables, which applications need them and what they are used for.
 All sensitive values are ommited.
 
+## How to set this up locally
+
+```
+cd local
+docker compose up -d
+```
 ## Local development
 
 to set up the infrastructure for local development, move to /local, create the .env file and then run
