@@ -59,7 +59,7 @@ services:
       - network
 
   frontend:
-    image: liberatorist/bpl2-frontend:0.0.1
+    image: liberatorist/bpl2-frontend:1.0.0
     container_name: frontend
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
