@@ -17,14 +17,15 @@ services:
     container_name: db-local
     restart: always
     ports:
-      - "5432:5432"
+      - "${DATABASE_PORT}:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
-      - PGUSER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - PGUSER=${POSTGRES_USER}
+      - PGPASSWORD=${POSTGRES_PASSWORD}
       - TIMESCALEDB_TELEMETRY=off
       - POSTGRESQL_CONF_shared_preload_libraries=timescaledb
+    env_file: .env
     healthcheck:
       test: ["CMD", "pg_isready"]
       interval: 5s
