@@ -37,7 +37,7 @@ services:
         condition: service_healthy
 
   backend:
-    image: liberatorist/bpl2-backend:0.0.1
+    image: liberatorist/bpl2-backend:1.0.0
     ulimits:
       nofile:
         soft: 65535
