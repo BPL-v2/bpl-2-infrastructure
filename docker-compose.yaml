@@ -189,7 +189,7 @@ services:
   # this service seems to be cpu bound. We cant afford to let it use more than 2 cores though
   # with this we expect about 0.6 PoBs per second calculated
   pob-server:
-    image: bplpoe/pob-server:1.0.0
+    image: bplpoe/pob-server:latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     container_name: pob-server
