@@ -40,8 +40,6 @@ https://github.com/BPL-v2/bpl-2-discord-bot
 
 https://github.com/BPL-v2/bpl-2-fronend
 
-
-
 ## Environment variables
 
 We use a .env file for out environment variables.
@@ -92,6 +90,7 @@ All sensitive values are ommited.
 cd local
 docker compose up -d
 ```
+
 ## Local development
 
 to set up the infrastructure for local development, move to /local, create the .env file and then run
@@ -102,12 +101,13 @@ docker compose up -d
 
 ## Deployment
 
-Once a change is pushed to the main branches of the backend/frontend/discord-bot repos, they trigger a github action to push newly build docker images to dockerhub and send an update request to watchtower.
+Once a change is pushed to the main branches of the backend/frontend/discord-bot/poe-server repos, they trigger a github action to push newly build docker images to dockerhub and send an update request to watchtower.
 The dockerhub repos are
 
-- https://hub.docker.com/repository/docker/liberatorist/bpl2-frontend
-- https://hub.docker.com/repository/docker/liberatorist/bpl2-backend
-- https://hub.docker.com/repository/docker/liberatorist/bpl2-discord-bot
+- https://hub.docker.com/repository/docker/bplpoe/frontend
+- https://hub.docker.com/repository/docker/bplpoe/backend
+- https://hub.docker.com/repository/docker/bplpoe/discord-bot
+- https://hub.docker.com/repository/docker/bplpoe/pob-server
 
 ## Timescale DB Migration
 

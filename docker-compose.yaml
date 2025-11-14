@@ -37,7 +37,7 @@ services:
         condition: service_healthy
 
   backend:
-    image: liberatorist/bpl2-backend:1.0.0
+    image: bplpoe/backend:1.0.0
     ulimits:
       nofile:
         soft: 65535
@@ -59,7 +59,7 @@ services:
       - network
 
   frontend:
-    image: liberatorist/bpl2-frontend:1.0.0
+    image: bplpoe/frontend:1.0.0
     container_name: frontend
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
@@ -67,7 +67,7 @@ services:
       - network
 
   discord-bot:
-    image: liberatorist/bpl2-discord-bot:0.0.0
+    image: bplpoe/discord-bot:0.0.0
     container_name: discord-bot
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
@@ -189,7 +189,7 @@ services:
   # this service seems to be cpu bound. We cant afford to let it use more than 2 cores though
   # with this we expect about 0.6 PoBs per second calculated
   pob-server:
-    image: liberatorist/pob-http-server:1.0.0
+    image: bplpoe/pob-server:1.0.0
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     container_name: pob-server

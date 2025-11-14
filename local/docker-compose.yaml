@@ -65,7 +65,7 @@ services:
       retries: 5
 
   pob-server:
-    image: liberatorist/pob-http-server:1.0.0
+    image: bplpoe/pob-http-server:1.0.0
     container_name: pob-server
     mem_limit: 1.5GB
     cpus: 2
