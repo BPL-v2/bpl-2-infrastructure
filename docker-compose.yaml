@@ -1,6 +1,6 @@
 services:
   watchtower:
-    image: containrrr/watchtower:amd64-1.7.1
+    image: nickfedor/watchtower:latest
     container_name: watchtower
     env_file:
       - .env
