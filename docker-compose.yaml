@@ -38,7 +38,7 @@ services:
       watchtower:
 
   backend:
-    image: bplpoe/backend:1.0.0
+    image: bplpoe/backend:1.0.2
     ulimits:
       nofile:
         soft: 65535
