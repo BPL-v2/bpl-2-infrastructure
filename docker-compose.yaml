@@ -199,6 +199,8 @@ services:
     cpus: 2
     networks:
       - network
+    ports:
+      - "8080:8080"
 
 volumes:
   db_data:
