@@ -36,6 +36,7 @@ services:
       backend:
         condition: service_healthy
       watchtower:
+        condition: service_started
 
   backend:
     image: bplpoe/backend:1.0.2
