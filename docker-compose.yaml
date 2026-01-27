@@ -188,9 +188,20 @@ services:
     networks:
       - network
 
+  # Internal load balancer for pob-pod replicas
+  pob-server:
+    image: nginx:alpine
+    container_name: pob-server
+    volumes:
+      - ./pob-load-balancer.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - network
+    depends_on:
+      - pob-pod
+
   # this service seems to be cpu bound. We cant afford to let it use more than 2 cores though
   # with this we expect about 0.6 PoBs per second calculated
-  pob-server:
+  pob-pod:
     image: bplpoe/pob-server:v2.54.0
     deploy:
       replicas: 4
