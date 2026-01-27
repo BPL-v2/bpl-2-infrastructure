@@ -18,7 +18,7 @@ services:
       - network
 
   reverse-proxy:
-    image: nginx:latest
+    image: nginx:1.29.4-alpine-slim
     ulimits:
       nofile:
         soft: 65535
@@ -190,7 +190,7 @@ services:
 
   # Internal load balancer for pob-pod replicas
   pob-server:
-    image: nginx:alpine
+    image: nginx:1.29.4-alpine-slim
     container_name: pob-server
     volumes:
       - ./pob-load-balancer.conf:/etc/nginx/nginx.conf:ro
