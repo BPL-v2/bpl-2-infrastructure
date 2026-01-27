@@ -193,11 +193,11 @@ services:
   pob-server:
     image: bplpoe/pob-server:v2.54.0
     deploy:
-      replicas: 6
+      replicas: 4
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     mem_limit: 1GB
-    cpus: .5
+    cpus: 1
     networks:
       - network
 
