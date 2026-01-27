@@ -192,15 +192,14 @@ services:
   # with this we expect about 0.6 PoBs per second calculated
   pob-server:
     image: bplpoe/pob-server:v2.54.0
+    deploy:
+      replicas: 3
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
-    container_name: pob-server
-    mem_limit: 1.5GB
-    cpus: 2
+    mem_limit: 1GB
+    cpus: 1
     networks:
       - network
-    ports:
-      - "8080:8080"
 
 volumes:
   db_data:
