@@ -1,6 +1,6 @@
 services:
   watchtower:
-    image: nickfedor/watchtower:latest
+    image: nickfedor/watchtower:1.14.0
     container_name: watchtower
     env_file:
       - .env
