@@ -91,14 +91,6 @@ cd local
 docker compose up -d
 ```
 
-## Local development
-
-to set up the infrastructure for local development, move to /local, create the .env file and then run
-
-```
-docker compose up -d
-```
-
 ## Deployment
 
 Once a change is pushed to the main branches of the backend/frontend/discord-bot/poe-server repos, they trigger a github action to push newly build docker images to dockerhub and send an update request to watchtower.
@@ -108,23 +100,3 @@ The dockerhub repos are
 - https://hub.docker.com/repository/docker/bplpoe/backend
 - https://hub.docker.com/repository/docker/bplpoe/discord-bot
 - https://hub.docker.com/repository/docker/bplpoe/pob-server
-
-## Timescale DB Migration
-
-We decided to install the timescaledb docker extension for character timeseries data.
-If you're still running the old postgres database in docker compose, change the image and run
-
-```
-docker compose up -d
-docker exec -it db bash
-echo "shared_preload_libraries = 'timescaledb'" >> /var/lib/postgresql/data/postgresql.conf
-docker restart db-local
-```
-
-connect to the database with psql and run
-
-```
-CREATE EXTENSION IF NOT EXISTS timescaledb;
-```
-
-to add the extension.
